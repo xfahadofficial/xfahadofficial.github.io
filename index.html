@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="xfahad.png">
+<title>Fahad Mansoori | Designer, Editor & Developer | Owner @zenitxglobal</title>
+
+<!-- Tailwind CSS for modern layouts -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Font Awesome Icons - upgraded to 6.5 for better brand icon support -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Premium Sans-Serif Fonts to completely fix the text stretching issue -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Three.js for network backdrop background -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- GSAP & ScrollTrigger for custom stacking scroll effects -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          purpleGlow: '#9d4edd', // Vibrant Neon Purple
+          violetGlow: '#c77dff', // Light purple highlight
+          deepPurple: '#3c096c', // Dark rich purple
+          darkBg: '#020104',     // Dark Obsidian Black
+          cardBg: 'rgba(12, 6, 20, 0.65)', // Glass purple tint
+          borderGlow: 'rgba(157, 78, 221, 0.12)'
+        },
+        fontFamily: {
+          outfit: ['Outfit', 'sans-serif'],
+          jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+          inter: ['Inter', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Base Layout Styles */
+  body {
+    background-color: #020104;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    cursor: none; /* Interactive Custom Cursor active */
+  }
+
+  /* Custom Sleek Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #020104;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #9d4edd, #3c096c);
+    border-radius: 10px;
+  }
+
+  /* Immersive Purple Cursor Follower */
+  #cursor {
+    width: 8px; height: 8px;
+    background: #9d4edd;
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.1s, height 0.1s, background-color 0.2s;
+    mix-blend-mode: screen;
+    box-shadow: 0 0 10px #9d4edd, 0 0 20px #9d4edd;
+  }
+  #cursor-ring {
+    width: 44px; height: 44px;
+    border: 1.5px solid rgba(157, 78, 221, 0.4);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s cubic-bezier(0.1, 0.8, 0.3, 1), height 0.3s cubic-bezier(0.1, 0.8, 0.3, 1), border-color 0.3s;
+  }
+  
+  /* Hover Interactive states */
+  .hover-target:hover ~ #cursor,
+  a:hover ~ #cursor,
+  button:hover ~ #cursor {
+    width: 18px; height: 18px;
+    background-color: #c77dff;
+    box-shadow: 0 0 15px #c77dff, 0 0 30px #c77dff;
+  }
+  .hover-target:hover ~ #cursor-ring,
+  a:hover ~ #cursor-ring,
+  button:hover ~ #cursor-ring {
+    width: 64px; height: 64px;
+    border-color: #c77dff;
+  }
+
+  /* Digital Fine Noise Overlay */
+  .noise {
+    position: fixed; inset: 0; z-index: 2;
+    pointer-events: none; opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Dark Purple Glowing Grid Matrix */
+  .grid-overlay {
+    position: fixed; inset: 0;
+    background-image: 
+      linear-gradient(rgba(157, 78, 221, 0.008) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(157, 78, 221, 0.008) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Ambient Blur Backdrops */
+  .ambient-glow-1 {
+    position: absolute; top: 0; right: 0;
+    width: 65vw; height: 65vw;
+    background: radial-gradient(circle, rgba(157, 78, 221, 0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .ambient-glow-2 {
+    position: absolute; bottom: 0; left: 0;
+    width: 65vw; height: 65vw;
+    background: radial-gradient(circle, rgba(60, 9, 108, 0.1) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Soft Glassmorphism Card Style */
+  .glass-card {
+    background: rgba(12, 6, 22, 0.65);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(157, 78, 221, 0.08);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .glass-card:hover {
+    border-color: rgba(157, 78, 221, 0.25);
+    box-shadow: 0 30px 60px rgba(157, 78, 221, 0.1), inset 0 0 20px rgba(157, 78, 221, 0.03);
+  }
+
+  /* Text Gradient Classes */
+  .text-glow-gradient {
+    background: linear-gradient(135deg, #ffffff 0%, #c77dff 50%, #9d4edd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Card Animated Gradient Border */
+  .card-border-animate {
+    position: relative;
+  }
+  .card-border-animate::before {
+    content: ''; position: absolute; inset: -1px;
+    background: linear-gradient(90deg, #9d4edd, #3c096c, #e0aaff, #9d4edd);
+    border-radius: inherit; z-index: -1;
+    background-size: 300% 300%;
+    opacity: 0; transition: opacity 0.4s;
+    animation: moveGradient 5s linear infinite;
+  }
+  .card-border-animate:hover::before {
+    opacity: 0.6;
+  }
+  @keyframes moveGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Typewriter Blinking Cursor */
+  .blink-cursor {
+    animation: blinkCursor 0.8s infinite;
+  }
+  @keyframes blinkCursor {
+    50% { opacity: 0; }
+  }
+
+  /* Zenitx Neon Text Glow */
+  .zenitx-neon {
+    text-shadow: 0 0 10px rgba(157, 78, 221, 0.5), 0 0 20px rgba(157, 78, 221, 0.2);
+  }
+
+  /* Loader Setup */
+  #loader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #020104; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 32px;
+  }
+  .loader-title {
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(2rem, 5vw, 4rem);
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff, #9d4edd);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* Custom Interactive Overlapping Container System */
+  .scroll-section {
+    position: relative;
+    will-change: transform, opacity;
+  }
+
+  /* ===== INLINE SVG BRAND ICONS (X & Threads failsafe) ===== */
+  .icon-x-twitter, .icon-threads {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    vertical-align: middle;
+  }
+  .icon-x-twitter {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E");
+  }
+  .icon-threads {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.028-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.586-.012 2.954-.338 4.069-.967 1.212-.69 1.821-1.593 1.821-2.676 0-.21-.012-.413-.038-.61-.15-1.163-.741-1.878-1.831-2.198a6.52 6.52 0 0 1-.207.56c-.338.815-.825 1.465-1.45 1.93-.664.493-1.437.747-2.298.754-1.1-.007-2.025-.338-2.752-.982-.75-.664-1.148-1.546-1.156-2.547.007-1.003.407-1.85 1.19-2.516.774-.656 1.768-.986 2.954-.986.4 0 .786.03 1.155.09-.13-.675-.378-1.163-.744-1.444-.454-.348-1.147-.527-2.062-.527-.787 0-1.511.165-2.154.49l-.792-1.81c.863-.416 1.853-.627 2.946-.627 1.516 0 2.727.4 3.597 1.19.839.762 1.288 1.85 1.395 3.217a7.67 7.67 0 0 1 1.08-.077c1.944 0 3.47.598 4.537 1.777.9 1 1.37 2.33 1.4 3.952.004.208.006.416.006.626 0 1.893-.82 3.46-2.374 4.534C17.046 23.29 14.8 24 12.186 24z'/%3E%3C/svg%3E");
+  }
+  .icon-x-twitter-violet {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c77dff'%3E%3Cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E");
+  }
+  .icon-threads-violet {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c77dff'%3E%3Cpath d='M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.028-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.586-.012 2.954-.338 4.069-.967 1.212-.69 1.821-1.593 1.821-2.676 0-.21-.012-.413-.038-.61-.15-1.163-.741-1.878-1.831-2.198a6.52 6.52 0 0 1-.207.56c-.338.815-.825 1.465-1.45 1.93-.664.493-1.437.747-2.298.754-1.1-.007-2.025-.338-2.752-.982-.75-.664-1.148-1.546-1.156-2.547.007-1.003.407-1.85 1.19-2.516.774-.656 1.768-.986 2.954-.986.4 0 .786.03 1.155.09-.13-.675-.378-1.163-.744-1.444-.454-.348-1.147-.527-2.062-.527-.787 0-1.511.165-2.154.49l-.792-1.81c.863-.416 1.853-.627 2.946-.627 1.516 0 2.727.4 3.597 1.19.839.762 1.288 1.85 1.395 3.217a7.67 7.67 0 0 1 1.08-.077c1.944 0 3.47.598 4.537 1.777.9 1 1.37 2.33 1.4 3.952.004.208.006.416.006.626 0 1.893-.82 3.46-2.374 4.534C17.046 23.29 14.8 24 12.186 24z'/%3E%3C/svg%3E");
+  }
+
+  /* ===== XFAHAD TOOLS SECTION ===== */
+  .xf-tool-card {
+    background: rgba(12, 6, 22, 0.65);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(157, 78, 221, 0.15);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+  }
+  .xf-tool-card::before {
+    content: '';
+    position: absolute; inset: -1px;
+    background: linear-gradient(135deg, rgba(157,78,221,0.3), transparent 50%, rgba(199,125,255,0.2));
+    border-radius: inherit; z-index: -1;
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .xf-tool-card:hover::before { opacity: 1; }
+  .xf-tool-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 32px 60px rgba(157, 78, 221, 0.2);
+  }
+
+  /* Glassmorphism Navbar */
+
+  #navbar {
+    background: rgba(8, 4, 16, 0.55);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border-bottom: 1px solid rgba(157, 78, 221, 0.10);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* Active nav pill (Home style) */
+  .nav-active {
+    background: linear-gradient(135deg, #9d4edd, #7b2fc9);
+    color: #fff !important;
+    padding: 6px 18px;
+    border-radius: 999px;
+    box-shadow: 0 0 18px rgba(157,78,221,0.55), 0 2px 8px rgba(0,0,0,0.4);
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+  }
+
+  /* Nav link hover underline glow */
+  #navbar ul a {
+    position: relative;
+    padding: 6px 4px;
+    transition: color 0.25s;
+  }
+  #navbar ul a:not(.nav-active)::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; right: 50%;
+    height: 1.5px;
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    border-radius: 2px;
+    transition: left 0.3s, right 0.3s;
+    opacity: 0;
+  }
+  #navbar ul a:not(.nav-active):hover::after {
+    left: 0; right: 0; opacity: 1;
+  }
+
+  /* ===== REVOLVING BORDER BUTTON (Contact Us style) ===== */
+  .revolving-btn {
+    position: relative;
+    border-radius: 999px;
+    padding: 10px 26px;
+    background: rgba(10, 5, 20, 0.75);
+    color: #c77dff;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: none;
+    text-decoration: none;
+    overflow: hidden;
+    z-index: 0;
+    transition: color 0.3s, background 0.3s, box-shadow 0.3s;
+  }
+  .revolving-btn::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 999px;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      #9d4edd 0%,
+      #e0aaff 25%,
+      #3c096c 50%,
+      #c77dff 75%,
+      #9d4edd 100%
+    );
+    z-index: -2;
+    animation: revolve 3s linear infinite;
+  }
+  .revolving-btn::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    border-radius: 999px;
+    background: rgba(10, 5, 20, 0.92);
+    z-index: -1;
+    transition: background 0.3s;
+  }
+  .revolving-btn:hover {
+    color: #fff;
+    box-shadow: 0 0 28px rgba(157,78,221,0.55);
+  }
+  .revolving-btn:hover::after {
+    background: rgba(157, 78, 221, 0.18);
+  }
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @keyframes revolve {
+    to { --angle: 360deg; }
+  }
+
+  /* ===== MOBILE MENU GLASSMORPHISM ===== */
+  #mobile-menu {
+    background: rgba(6, 2, 14, 0.82) !important;
+    backdrop-filter: blur(32px) !important;
+    -webkit-backdrop-filter: blur(32px) !important;
+    border-right: 1px solid rgba(157, 78, 221, 0.12);
+    box-shadow: inset 0 0 80px rgba(157, 78, 221, 0.05);
+  }
+  #mobile-menu a {
+    position: relative;
+    padding: 8px 28px;
+    border-radius: 16px;
+    transition: background 0.25s, color 0.25s;
+  }
+  #mobile-menu a:hover {
+    background: rgba(157, 78, 221, 0.12);
+    color: #c77dff;
+  }
+  #mobile-menu::before {
+    content: '';
+    position: absolute;
+    top: 20%; left: 50%;
+    transform: translateX(-50%);
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(157,78,221,0.1) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body class="font-inter">
+
+<!-- Premium Loader -->
+<div id="loader">
+  <div class="loader-title animate-pulse">XFAHAD.</div>
+  <div class="w-48 h-[2px] bg-white/5 rounded-full overflow-hidden">
+    <div class="h-full bg-gradient-to-r from-purpleGlow to-violetGlow transition-all duration-300" id="loader-bar" style="width: 0%"></div>
+  </div>
+  <div class="text-xs font-outfit font-bold tracking-[0.3em] text-purpleGlow/50" id="loader-pct">0%</div>
+</div>
+
+<!-- Cursor Follow Nodes -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Ambient Design Layers -->
+<div class="noise"></div>
+<div class="grid-overlay"></div>
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-tracker" class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-purpleGlow via-violetGlow to-deepPurple z-50 transition-all duration-75" style="width: 0%"></div>
+
+<!-- Optimized Three.js Particle Web Background -->
+<canvas id="three-web-canvas" class="fixed inset-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
+
+<!-- Main Scaffold -->
+<div id="smooth-scroll-wrapper" class="overflow-x-hidden w-full relative">
+
+   <!-- Fixed Navigation Bar -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full z-40 transition-all duration-300 py-4 px-6 md:px-16 flex justify-between items-center">
+    <a href="#home" class="flex items-center gap-3 font-outfit font-extrabold text-2xl tracking-normal hover-target">
+      <img src="xfahad.png" alt="XFahad Logo" class="h-8 w-auto object-contain brightness-200">
+      <span class="hidden sm:block text-white">@<span class="text-purpleGlow">XFAHADOFFICIAL</span></span>
+    </a>
+
+    <!-- Nav Items -->
+    <ul class="hidden md:flex items-center space-x-2 text-xs tracking-[0.2em] uppercase font-semibold text-white/60">
+      <li><a href="#home" class="nav-active font-outfit">Home</a></li>
+      <li><a href="#identity-portal" class="hover:text-purpleGlow transition-colors duration-300 px-4 py-1.5">Brand Hub</a></li>
+      <li><a href="#zenitx" class="hover:text-purpleGlow transition-colors duration-300 px-4 py-1.5">Zenitx Global</a></li>
+      <li><a href="#skills" class="hover:text-purpleGlow transition-colors duration-300 px-4 py-1.5">Skills</a></li>
+      <li><a href="#works" class="hover:text-purpleGlow transition-colors duration-300 px-4 py-1.5">Works</a></li>
+      <li><a href="#xfahad-tools" class="hover:text-violetGlow transition-colors duration-300 px-4 py-1.5 text-violetGlow/70">Tools</a></li>
+    </ul>
+
+    <!-- Revolving Border Collab Button -->
+    <a href="#contact" class="revolving-btn hidden md:inline-flex hover-target">
+      Let's Collab <i class="fa-solid fa-arrow-trend-up text-[10px]"></i>
+    </a>
+
+    <!-- Mobile Trigger -->
+    <button id="mobile-toggle" class="md:hidden text-2xl text-white hover-target">
+      <i class="fa-solid fa-bars-staggered"></i>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu" class="fixed inset-0 z-30 hidden flex-col justify-center items-center space-y-4 font-outfit text-2xl font-bold uppercase transition-all duration-500">
+    <button id="mobile-close" class="absolute top-6 right-6 text-2xl text-white/70 hover:text-purpleGlow transition-colors z-50"><i class="fa-solid fa-xmark"></i></button>
+    <!-- Logo in mobile menu -->
+    <div class="absolute top-6 left-6 text-white font-outfit font-extrabold text-xl">@<span class="text-purpleGlow">XFAHAD</span></div>
+    <a href="#home" class="mobile-nav-link hover:text-purpleGlow transition-colors tracking-widest">Home</a>
+    <a href="#identity-portal" class="mobile-nav-link hover:text-purpleGlow transition-colors tracking-widest">Brand Hub</a>
+    <a href="#zenitx" class="mobile-nav-link hover:text-purpleGlow transition-colors tracking-widest">Zenitx Global</a>
+    <a href="#skills" class="mobile-nav-link hover:text-purpleGlow transition-colors tracking-widest">Skills</a>
+    <a href="#works" class="mobile-nav-link hover:text-purpleGlow transition-colors tracking-widest">Works</a>
+    <a href="#xfahad-tools" class="mobile-nav-link text-violetGlow hover:text-purpleGlow transition-colors tracking-widest">Tools</a>
+    <div class="pt-4">
+      <a href="#contact" class="mobile-nav-link revolving-btn text-sm">Contact <i class="fa-solid fa-arrow-trend-up text-[10px]"></i></a>
+    </div>
+  </div>
+
+  <!-- ================= HERO SECTION ================= -->
+  <section id="home" class="scroll-section min-h-screen pt-32 pb-16 px-6 md:px-16 flex items-center relative z-10">
+    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Left Side Info -->
+      <div class="lg:col-span-7 space-y-8">
+        <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-purpleGlow/10 border border-purpleGlow/30 text-purpleGlow text-[10px] md:text-xs font-semibold tracking-[0.25em] uppercase font-outfit">
+          <span class="w-2.5 h-2.5 rounded-full bg-purpleGlow animate-ping"></span> Global Creator Network
+        </div>
+
+        <!-- Corrected typography to prevent stretching issues seen in image_30c03c.jpg -->
+        <div class="space-y-3">
+          <h3 class="font-outfit text-xl md:text-2xl text-white/60 tracking-tight">Hi, I am</h3>
+          <h1 class="font-outfit font-extrabold text-4xl sm:text-6xl md:text-7xl leading-tight tracking-tight text-white">
+            FAHAD <br>
+            <span class="text-glow-gradient">MANSOORI</span>
+          </h1>
+        </div>
+
+        <!-- Typewriter Display -->
+        <p class="text-lg md:text-2xl text-white/75 font-medium min-h-[40px] flex items-center flex-wrap gap-1 font-outfit">
+          Professional <span id="typewriter" class="text-purpleGlow font-bold"></span><span class="blink-cursor text-purpleGlow">|</span>
+        </p>
+
+        <p class="text-white/40 text-sm md:text-base max-w-lg leading-relaxed">
+          Designer, Editor, and Developer. Delivering high-retention video styling, motion designs, and front-end code with optimized layouts for personal branding globally.
+        </p>
+
+        <!-- CTA Buttons conforming to premium Purple/Black schema -->
+        <div class="flex flex-wrap gap-4 pt-2">
+          <a href="https://formsxfahadofficial.netlify.app/" target="_blank" class="px-8 py-4 rounded-full bg-purpleGlow text-black font-outfit font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_30px_rgba(157,78,221,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2">
+            Work with me <i class="fa-solid fa-bolt"></i>
+          </a>
+          <a href="https://xfahadofficial-ai-massive-library.netlify.app/" target="_blank" class="px-8 py-4 rounded-full border border-violetGlow text-violetGlow hover:bg-purpleGlow/15 font-outfit font-bold text-sm tracking-wider uppercase transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2">
+            AI Library <i class="fa-solid fa-brain"></i>
+          </a>
+        </div>
+
+        <!-- Statistics Blocks -->
+        <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/5">
+          <div>
+            <h2 class="font-outfit font-extrabold text-2xl md:text-4xl text-white">4+</h2>
+            <p class="text-[10px] md:text-xs text-white/40 tracking-wider uppercase mt-1">Years Active</p>
+          </div>
+          <div>
+            <h2 class="font-outfit font-extrabold text-2xl md:text-4xl text-white">550+</h2>
+            <p class="text-[10px] md:text-xs text-white/40 tracking-wider uppercase mt-1">Global Clients</p>
+          </div>
+          <div>
+            <h2 class="font-outfit font-extrabold text-2xl md:text-4xl text-white">95%</h2>
+            <p class="text-[10px] md:text-xs text-white/40 tracking-wider uppercase mt-1">Success Rate</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Visual (image_30c03c.jpg Alignment) -->
+      <div class="lg:col-span-5 flex justify-center items-center relative py-12">
+        <div class="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[420px] md:h-[420px] group">
+          
+          <!-- Orbit Rings -->
+          <div class="absolute inset-0 rounded-full border border-dashed border-purpleGlow/20 animate-[spin_40s_linear_infinite] pointer-events-none"></div>
+          <div class="absolute inset-[-15px] rounded-full border border-double border-violetGlow/10 animate-[spin_60s_linear_infinite_reverse] pointer-events-none"></div>
+          
+          <!-- Float Icons -->
+          <div class="absolute top-[8%] left-[2%] w-10 h-10 rounded-xl bg-purpleGlow/10 border border-purpleGlow/30 flex items-center justify-center text-purpleGlow animate-bounce"><i class="fa-solid fa-code"></i></div>
+          <div class="absolute bottom-[10%] right-[2%] w-11 h-11 rounded-xl bg-violetGlow/10 border border-violetGlow/30 flex items-center justify-center text-violetGlow animate-pulse"><i class="fa-solid fa-video"></i></div>
+          <div class="absolute top-[60%] left-[-8%] w-10 h-10 rounded-xl bg-deepPurple/20 border border-purpleGlow/20 flex items-center justify-center text-purpleGlow"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+
+          <!-- Glass Profile Container -->
+          <div class="w-full h-full rounded-[48px] overflow-hidden glass-card card-border-animate p-1 relative transform transition-transform duration-500 hover:scale-[1.03]">
+            <div class="w-full h-full rounded-[46px] overflow-hidden bg-darkBg/90 relative">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#020104]/95 via-transparent to-transparent z-10"></div>
+              
+              <!-- Profile image — place xfahad.jpg in same folder as this HTML file -->
+              <img 
+                id="profile-img"
+                src="xfahad.jpg" 
+                alt="Fahad Mansoori Avatar" 
+                class="w-full h-full object-cover grayscale contrast-110 brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                onerror="this.style.display='none'; document.getElementById('profile-fallback').style.display='flex';"
+              />
+              <!-- Fallback shown when xfahad.jpg is missing -->
+              <div id="profile-fallback" class="absolute inset-0 z-5 flex-col items-center justify-center" style="display:none; background: radial-gradient(circle at 40% 35%, rgba(157,78,221,0.18) 0%, rgba(60,9,108,0.10) 50%, transparent 80%);">
+                <div style="font-family:'Outfit',sans-serif; font-weight:800; font-size:clamp(4rem,18vw,7rem); letter-spacing:-0.04em; background:linear-gradient(135deg,rgba(255,255,255,0.15) 0%,rgba(157,78,221,0.35) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; user-select:none;">
+                  .FM
+                </div>
+                <p style="font-family:'Outfit',sans-serif; font-size:0.6rem; letter-spacing:0.35em; color:rgba(157,78,221,0.5); text-transform:uppercase; margin-top:12px;">Place xfahad.jpg here</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Badge Container -->
+          <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 sm:w-4/5 glass-card rounded-2xl py-3 px-4 flex items-center gap-3 border border-purpleGlow/20 shadow-lg">
+            <div class="w-8 h-8 rounded-lg bg-purpleGlow/20 flex items-center justify-center text-purpleGlow text-sm flex-shrink-0"><i class="fa-solid fa-trophy"></i></div>
+            <div class="min-w-0">
+              <h4 class="font-bold text-xs truncate">Top Rated Visualist</h4>
+              <p class="text-[10px] text-white/50 truncate">Interactive & Brand Architect</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= BRAND CONSISTENCY & IDENTITY PORTAL ================= -->
+  <section id="identity-portal" class="scroll-section py-24 px-6 md:px-16 border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto space-y-16">
+      
+      <!-- Section Title -->
+      <div class="text-center space-y-4 max-w-3xl mx-auto">
+        <div class="inline-flex items-center gap-2 text-purpleGlow text-xs font-semibold tracking-wider uppercase font-outfit">
+          <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow animate-pulse"></span> Brand Integrity Portal
+        </div>
+        <h2 class="font-outfit font-extrabold text-3xl md:text-5xl text-white tracking-tight">
+          How to Find <span class="text-violetGlow italic font-normal">Fahad Mansoori</span>
+        </h2>
+        <p class="text-white/50 text-sm md:text-base leading-relaxed">
+          Google and other search networks index me globally under the primary username <strong class="text-purpleGlow font-medium">@xfahadofficial</strong>. For active content updates, our distribution is active under our handler <strong class="text-purpleGlow font-medium">@xfahad_official</strong> across Instagram, Threads, and TikTok.
+        </p>
+      </div>
+
+      <!-- Live Split Visualization (image_337739.png logic mapping) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- Left Side: Official Brand Banner (xfbanner.png / image_30daff.png) -->
+        <div class="lg:col-span-5 glass-card rounded-[32px] p-6 flex flex-col justify-between border border-white/5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-purpleGlow/5 rounded-full blur-2xl"></div>
+          
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] tracking-widest uppercase text-purpleGlow font-bold font-outfit">Official Brand Banner</span>
+              <span class="text-[9px] bg-purpleGlow/10 text-purpleGlow py-0.5 px-2 rounded-full font-mono border border-purpleGlow/25">2048 x 1152 PX</span>
+            </div>
+            <p class="text-xs text-white/40 leading-relaxed">
+              Verified premium brand banner showcasing the unified digital aesthetics of Fahad Mansoori:
+            </p>
+          </div>
+
+          <!-- Banner Container constrained to correct aspect ratio (image_30daff.png) -->
+          <div class="my-6 rounded-2xl overflow-hidden border border-white/10 bg-black/40 p-1 group hover:border-purpleGlow/35 transition-all duration-300">
+            <img 
+              src="xfbanner.png" 
+              alt="Fahad Mansoori Official Brand Banner" 
+              class="w-full h-auto rounded-xl mx-auto filter brightness-95 contrast-105 duration-500 group-hover:scale-[1.01] object-cover"
+              style="aspect-ratio: 2048 / 1152;"
+              onerror="this.style.display='none'; document.getElementById('banner-fallback').classList.remove('hidden');"
+            />
+            <div id="banner-fallback" class="hidden rounded-xl items-center justify-center flex-col relative overflow-hidden" style="aspect-ratio: 2048 / 1152; background: linear-gradient(135deg, #0c0618 0%, #1a0533 40%, #0c0618 100%);">
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%, rgba(157,78,221,0.18) 0%,transparent 60%),radial-gradient(ellipse at 75% 50%, rgba(60,9,108,0.2) 0%,transparent 60%);"></div>
+              <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(1.5rem,5vw,3.5rem);letter-spacing:-0.03em;background:linear-gradient(135deg,#fff 0%,#c77dff 50%,#9d4edd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;z-index:1;">FAHAD MANSOORI</div>
+              <div style="font-family:'Outfit',sans-serif;font-size:clamp(0.5rem,1.5vw,0.75rem);letter-spacing:0.4em;color:rgba(157,78,221,0.6);text-transform:uppercase;margin-top:8px;position:relative;z-index:1;">Designer · Editor · Developer · @zenitxglobal</div>
+              <p style="position:absolute;bottom:8px;right:12px;font-size:0.5rem;color:rgba(255,255,255,0.15);letter-spacing:0.2em;font-family:monospace;">Place xfbanner.png in same folder</p>
+            </div>
+          </div>
+
+          <div class="text-[10px] text-white/30 italic text-center border-t border-white/5 pt-3">
+            Referencing secure asset: xfbanner.png
+          </div>
+        </div>
+
+        <!-- Right Side: Interactive Link Matrix Portal (Direct replication of image_337739.png style) -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+          
+          <!-- @xfahadofficial (Google Indexing Ecosystem) -->
+          <div class="glass-card rounded-[32px] p-6 md:p-8 border border-white/5 space-y-6 hover:border-purpleGlow/20 transition-all flex flex-col justify-between flex-1">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="space-y-1">
+                <span class="text-[10px] uppercase font-bold text-purpleGlow tracking-widest flex items-center gap-1.5 font-outfit">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow animate-ping"></span> Google SEO Ecosystem
+                </span>
+                <h3 class="font-outfit font-extrabold text-2xl text-white">@xfahadofficial</h3>
+              </div>
+              <div class="px-4 py-1.5 rounded-full bg-purpleGlow/10 border border-purpleGlow/30 text-purpleGlow text-[10px] font-bold uppercase tracking-wider self-start sm:self-auto font-outfit">
+                Search Core Index
+              </div>
+            </div>
+
+            <!-- Icon Grid based on image_337739.png bubble 1 -->
+            <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
+              <!-- Facebook -->
+              <a href="https://facebook.com/xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-brands fa-facebook text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">FB</span>
+              </a>
+              <!-- X (Twitter) -->
+              <a href="https://x.com/xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <span class="icon-x-twitter mb-1 group-hover:opacity-70" style="width:20px;height:20px;filter:brightness(1);"></span>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">X</span>
+              </a>
+              <!-- YouTube -->
+              <a href="https://youtube.com/@xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-brands fa-youtube text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">YT</span>
+              </a>
+              <!-- LinkedIn -->
+              <a href="https://linkedin.com/in/xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-brands fa-linkedin-in text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">IN</span>
+              </a>
+              <!-- Behance -->
+              <a href="https://behance.net/xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-brands fa-behance text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">BE</span>
+              </a>
+              <!-- Pinterest -->
+              <a href="https://pinterest.com/xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-brands fa-pinterest text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">PIN</span>
+              </a>
+              <!-- Google -->
+              <a href="https://google.com/search?q=xfahadofficial" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-brands fa-google text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">SEO</span>
+              </a>
+              <!-- Web -->
+              <a href="https://xfahadofficial.github.io" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purpleGlow/30 hover:bg-purpleGlow/5 transition-all group">
+                <i class="fa-solid fa-globe text-white group-hover:text-purpleGlow text-xl mb-1"></i>
+                <span class="text-[9px] text-white/40 group-hover:text-white transition-colors">WEB</span>
+              </a>
+            </div>
+
+            <p class="text-xs text-white/30 italic">
+              *Note: Search index parameters lead users directly to this portfolio hub.
+            </p>
+          </div>
+
+          <!-- @xfahad_official (Active Visual & Social Platforms) -->
+          <div class="glass-card rounded-[32px] p-6 md:p-8 border border-white/5 space-y-6 hover:border-violetGlow/20 transition-all flex flex-col justify-between flex-1">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="space-y-1">
+                <span class="text-[10px] uppercase font-bold text-violetGlow tracking-widest flex items-center gap-1.5 font-outfit">
+                  <span class="w-1.5 h-1.5 rounded-full bg-violetGlow animate-ping"></span> Active Brand Channel
+                </span>
+                <h3 class="font-outfit font-extrabold text-2xl text-white">@xfahad_official</h3>
+              </div>
+              <div class="px-4 py-1.5 rounded-full bg-violetGlow/10 border border-violetGlow/30 text-violetGlow text-[10px] font-bold uppercase tracking-wider self-start sm:self-auto font-outfit animate-pulse">
+                Active Social Nodes
+              </div>
+            </div>
+
+            <!-- Icon Grid based on image_337739.png bubble 2 -->
+            <div class="grid grid-cols-3 gap-4">
+              <!-- Instagram -->
+              <a href="https://instagram.com/xfahad_official" target="_blank" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-violetGlow/40 hover:bg-violetGlow/5 transition-all group">
+                <i class="fa-brands fa-instagram text-white group-hover:text-violetGlow text-3xl mb-1"></i>
+                <span class="text-xs font-bold text-white/40 group-hover:text-white transition-colors">Instagram</span>
+              </a>
+              <!-- Threads -->
+              <a href="https://threads.net/@xfahad_official" target="_blank" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-violetGlow/40 hover:bg-violetGlow/5 transition-all group">
+                <span class="icon-threads mb-1" style="width:28px;height:28px;"></span>
+                <span class="text-xs font-bold text-white/40 group-hover:text-white transition-colors">Threads</span>
+              </a>
+              <!-- TikTok -->
+              <a href="https://tiktok.com/@xfahad_official" target="_blank" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-violetGlow/40 hover:bg-violetGlow/5 transition-all group">
+                <i class="fa-brands fa-tiktok text-white group-hover:text-violetGlow text-3xl mb-1"></i>
+                <span class="text-xs font-bold text-white/40 group-hover:text-white transition-colors">TikTok</span>
+              </a>
+            </div>
+
+            <p class="text-xs text-white/30 italic">
+              *Direct Instruction: Follow these active channels to receive regular design releases.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ZENITX GLOBAL SECTOR ================= -->
+  <section id="zenitx" class="scroll-section py-24 px-6 md:px-16 bg-gradient-to-b from-darkBg to-[#07040d] border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto">
+      <div class="glass-card rounded-[40px] p-6 md:p-16 border border-purpleGlow/25 overflow-hidden relative">
+        <div class="absolute inset-0 bg-radial-gradient from-purpleGlow/5 via-transparent to-transparent"></div>
+        <div class="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#9d4edd_1px,transparent_1.5px)] [background-size:20px_20px] pointer-events-none"></div>
+
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <!-- Identity Info -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="inline-flex items-center gap-2 text-purpleGlow text-[10px] font-bold tracking-[0.3em] uppercase font-outfit">
+              <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow"></span> OWNER SECTOR
+            </div>
+            <h2 class="font-outfit font-black text-4xl md:text-5xl text-white tracking-tight leading-none">
+              ZENITX<br><span class="text-purpleGlow zenitx-neon">GLOBAL</span>
+            </h2>
+            <p class="text-white/60 text-sm leading-relaxed max-w-sm">
+              Zenitx Global is our unified agency delivering custom high-retention content, modern motion graphics, and robust frontend design frameworks worldwide.
+            </p>
+            <div class="pt-2">
+              <a href="https://instagram.com/zenitxglobal" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-violetGlow hover:text-purpleGlow tracking-wider uppercase transition-colors font-outfit">
+                Explore @zenitxglobal <i class="fa-solid fa-arrow-trend-up"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 rounded-3xl bg-black/40 border border-white/5 hover:border-purpleGlow/20 transition-all duration-300">
+              <div class="w-10 h-10 rounded-xl bg-purpleGlow/10 flex items-center justify-center text-purpleGlow mb-4 text-lg"><i class="fa-solid fa-circle-nodes"></i></div>
+              <h4 class="font-outfit font-bold text-lg text-white mb-2 tracking-tight">Enterprise Solutions</h4>
+              <p class="text-white/40 text-xs leading-relaxed">Systemizing complex online structures for growing businesses seamlessly.</p>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-black/40 border border-white/5 hover:border-violetGlow/20 transition-all duration-300">
+              <div class="w-10 h-10 rounded-xl bg-violetGlow/10 flex items-center justify-center text-violetGlow mb-4 text-lg"><i class="fa-solid fa-globe"></i></div>
+              <h4 class="font-outfit font-bold text-lg text-white mb-2 tracking-tight">Worldwide Operations</h4>
+              <p class="text-white/40 text-xs leading-relaxed">Efficient project distribution across distinct remote time zones.</p>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-black/40 border border-white/5 hover:border-purpleGlow/20 transition-all duration-300">
+              <div class="w-10 h-10 rounded-xl bg-purpleGlow/10 flex items-center justify-center text-purpleGlow mb-4 text-lg"><i class="fa-solid fa-clapperboard"></i></div>
+              <h4 class="font-outfit font-bold text-lg text-white mb-2 tracking-tight">Motion Productions</h4>
+              <p class="text-white/40 text-xs leading-relaxed">Dynamic frame transitions, custom video typography, and content edits.</p>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-black/40 border border-white/5 hover:border-purpleGlow/20 transition-all duration-300 flex flex-col justify-between">
+              <div>
+                <h4 class="font-outfit font-bold text-lg text-white mb-1 tracking-tight">Scale Management</h4>
+                <p class="text-white/40 text-xs leading-relaxed">Handling complex design scopes with structured, verified resources.</p>
+              </div>
+              <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-purpleGlow font-bold tracking-wider uppercase font-outfit">
+                <span>Direct Support Ready</span>
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TIMELINE / JOURNEY SECTION ================= -->
+  <section id="journey" class="scroll-section py-24 px-6 md:px-16 border-t border-white/5 relative z-10">
+    <div class="max-w-5xl mx-auto space-y-16">
+      
+      <div class="text-center space-y-4">
+        <div class="inline-flex items-center gap-2 text-purpleGlow text-xs font-semibold tracking-wider uppercase font-outfit">
+          <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow"></span> Progression Records
+        </div>
+        <h2 class="font-outfit font-extrabold text-3xl md:text-5xl text-white tracking-tight">
+          Verified <span class="text-violetGlow italic font-normal">Timeline</span>
+        </h2>
+      </div>
+
+      <div class="relative border-l border-white/10 ml-4 md:ml-32 space-y-12 py-4">
+        
+        <!-- Experience 1 -->
+        <div class="relative pl-8 md:pl-12 group">
+          <span class="absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full bg-purpleGlow ring-4 ring-purpleGlow/25 group-hover:scale-125 transition-transform duration-300"></span>
+          <span class="hidden md:block absolute left-[-160px] top-1 font-outfit font-black text-lg text-white/30 tracking-widest group-hover:text-purpleGlow transition-colors duration-300">2022 - 2026</span>
+          
+          <div class="glass-card rounded-2xl p-6 md:p-8 space-y-3 transform transition-transform duration-300 hover:-translate-y-1">
+            <span class="md:hidden font-bold text-xs text-purpleGlow tracking-wider uppercase block mb-1 font-outfit">2022 - 2026</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 class="font-outfit font-bold text-lg md:text-xl text-white tracking-tight">Freelance Brand Specialist</h3>
+              <span class="self-start sm:self-auto text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-purpleGlow/10 text-purpleGlow rounded-full border border-purpleGlow/20 font-outfit">Upwork & Fiverr</span>
+            </div>
+            <p class="text-white/50 text-xs md:text-sm leading-relaxed">
+              Constructing tailored asset bundles, high-retention short edits, and custom frontends for global clients with high feedback scores.
+            </p>
+          </div>
+        </div>
+
+        <!-- Experience 2 -->
+        <div class="relative pl-8 md:pl-12 group">
+          <span class="absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full bg-violetGlow ring-4 ring-violetGlow/25 group-hover:scale-125 transition-transform duration-300"></span>
+          <span class="hidden md:block absolute left-[-160px] top-1 font-outfit font-black text-lg text-white/30 tracking-widest group-hover:text-violetGlow transition-colors duration-300">2024 - 2026</span>
+          
+          <div class="glass-card rounded-2xl p-6 md:p-8 space-y-3 transform transition-transform duration-300 hover:-translate-y-1">
+            <span class="md:hidden font-bold text-xs text-violetGlow tracking-wider uppercase block mb-1 font-outfit">2024 - 2026</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 class="font-outfit font-bold text-lg md:text-xl text-white tracking-tight">Founder & Operator</h3>
+              <span class="self-start sm:self-auto text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-violetGlow/10 text-violetGlow rounded-full border border-violetGlow/20 font-outfit font-outfit">Zenitx Global</span>
+            </div>
+            <p class="text-white/50 text-xs md:text-sm leading-relaxed">
+              Establishing Zenitx Global as a digital execution consultancy brand, scaling team assets for enterprise video and software deployment.
+            </p>
+          </div>
+        </div>
+
+        <!-- Experience 3 -->
+        <div class="relative pl-8 md:pl-12 group">
+          <span class="absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full bg-deepPurple ring-4 ring-deepPurple/25 group-hover:scale-125 transition-transform duration-300"></span>
+          <span class="hidden md:block absolute left-[-160px] top-1 font-outfit font-black text-lg text-white/30 tracking-widest group-hover:text-deepPurple transition-colors duration-300">2024 - 2025</span>
+          
+          <div class="glass-card rounded-2xl p-6 md:p-8 space-y-3 transform transition-transform duration-300 hover:-translate-y-1">
+            <span class="md:hidden font-bold text-xs text-deepPurple tracking-wider uppercase block mb-1 font-outfit">2024 - 2025</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 class="font-outfit font-bold text-lg md:text-xl text-white tracking-tight">BSIE Karachi</h3>
+              <span class="self-start sm:self-auto text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-deepPurple/20 text-violetGlow rounded-full border border-purpleGlow/20 font-outfit">Tech & Creative Focus</span>
+            </div>
+            <p class="text-white/50 text-xs md:text-sm leading-relaxed">
+              Completing core computer science modules combined with digital typography guidelines, solidifying structural interface layout mastery.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SKILLS SECTION ================= -->
+  <section id="skills" class="scroll-section py-24 px-6 md:px-16 bg-[#040209] border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Column -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="inline-flex items-center gap-2 text-purpleGlow text-xs font-semibold tracking-wider uppercase font-outfit">
+            <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow"></span> Core Mastery
+          </div>
+          <h2 class="font-outfit font-extrabold text-3xl md:text-5xl text-white leading-tight tracking-tight">
+            Execution <br>
+            <span class="text-glow-gradient">Frameworks</span>
+          </h2>
+          <p class="text-white/50 text-sm md:text-base leading-relaxed">
+            I optimize backend frameworks and visual layers to produce clean layouts, preserving high retention aesthetics and swift, responsive deployment actions.
+          </p>
+          <div class="p-6 rounded-2xl border border-white/5 bg-white/[0.01]">
+            <div class="flex gap-4 items-center">
+              <div class="w-12 h-12 rounded-xl bg-purpleGlow/15 flex items-center justify-center text-purpleGlow text-lg flex-shrink-0"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <div class="min-w-0">
+                <h4 class="font-bold text-sm text-white truncate">Full-Stack Creative Output</h4>
+                <p class="text-white/40 text-xs mt-0.5 truncate">Generating high-speed performance websites and reels.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column (Progress Bars) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Skill Item 1 -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-end gap-2 flex-wrap">
+              <span class="font-outfit font-bold text-sm text-white tracking-wide">Interface Design (UI/UX)</span>
+              <span class="text-xs text-purpleGlow font-bold font-outfit">98% Mastery</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-purpleGlow to-violetGlow transition-all duration-1000" style="width: 98%"></div>
+            </div>
+          </div>
+
+          <!-- Skill Item 2 -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-end gap-2 flex-wrap">
+              <span class="font-outfit font-bold text-sm text-white tracking-wide">High-Retention Video Editing</span>
+              <span class="text-xs text-violetGlow font-bold font-outfit">95% Mastery</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-deepPurple via-purpleGlow to-violetGlow transition-all duration-1000" style="width: 95%"></div>
+            </div>
+          </div>
+
+          <!-- Skill Item 3 -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-end gap-2 flex-wrap">
+              <span class="font-outfit font-bold text-sm text-white tracking-wide">Graphic Design & Direct Aesthetics</span>
+              <span class="text-xs text-purpleGlow font-bold font-outfit">85% Mastery</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-purpleGlow to-deepPurple transition-all duration-1000" style="width: 85%"></div>
+            </div>
+          </div>
+
+          <!-- Skill Item 4 -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-end gap-2 flex-wrap">
+              <span class="font-outfit font-bold text-sm text-white tracking-wide">Web Frontend Development</span>
+              <span class="text-xs text-violetGlow font-bold font-outfit">75% Mastery</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-violetGlow to-purpleGlow transition-all duration-1000" style="width: 75%"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WORKS / PORTFOLIO SECTION ================= -->
+  <section id="works" class="scroll-section py-24 px-6 md:px-16 border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 text-purpleGlow text-xs font-semibold tracking-wider uppercase font-outfit">
+            <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow"></span> Portfolio Show
+          </div>
+          <h2 class="font-outfit font-extrabold text-3xl md:text-5xl text-white leading-tight tracking-tight">
+            Selected <span class="text-purpleGlow italic font-normal">Works</span>
+          </h2>
+        </div>
+        
+        <!-- Filter Controls -->
+        <div class="flex flex-wrap gap-2">
+          <button class="filter-btn px-5 py-2 rounded-full bg-purpleGlow text-black text-xs font-bold font-outfit uppercase tracking-wider transition-all" data-filter="all">All Works</button>
+          <button class="filter-btn px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 text-white/70 text-xs font-bold font-outfit uppercase tracking-wider transition-all" data-filter="design">Behance/Design</button>
+          <button class="filter-btn px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 text-white/70 text-xs font-bold font-outfit uppercase tracking-wider transition-all" data-filter="edit">Video Projects</button>
+        </div>
+      </div>
+
+      <!-- Portfolio Dynamic Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Card 1 -->
+        <div class="work-card-element glass-card rounded-[32px] overflow-hidden p-6 border border-white/5 flex flex-col justify-between group transform transition-all duration-300 hover:-translate-y-2" data-category="design">
+          <div class="relative rounded-2xl overflow-hidden aspect-video bg-black/50 mb-6">
+            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent z-10"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-4xl text-purpleGlow/40 group-hover:scale-110 transition-transform duration-500"><i class="fa-brands fa-behance"></i></div>
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80" alt="Behance Design Layout" class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500" />
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center text-xs text-purpleGlow font-bold uppercase tracking-wider gap-2">
+              <span>Graphic Direction</span>
+              <span class="flex-shrink-0"><i class="fa-brands fa-behance"></i> Active</span>
+            </div>
+            <h3 class="font-outfit font-bold text-xl text-white group-hover:text-purpleGlow transition-colors tracking-tight">Behance Creative Space</h3>
+            <p class="text-white/40 text-xs leading-relaxed">A complete online showcase hosting responsive layout structures, guidelines, and core brand blueprints.</p>
+            <div class="pt-4">
+              <a href="https://behance.net/xfahadofficial" target="_blank" class="text-xs font-bold text-white group-hover:text-purpleGlow flex items-center gap-1.5 uppercase tracking-wider font-outfit">
+                View Profile <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="work-card-element glass-card rounded-[32px] overflow-hidden p-6 border border-white/5 flex flex-col justify-between group transform transition-all duration-300 hover:-translate-y-2" data-category="edit">
+          <div class="relative rounded-2xl overflow-hidden aspect-video bg-black/50 mb-6">
+            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent z-10"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-4xl text-violetGlow/40 group-hover:scale-110 transition-transform duration-500"><i class="fa-solid fa-clapperboard"></i></div>
+            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80" alt="Video production mockup" class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500" />
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center text-xs text-violetGlow font-bold uppercase tracking-wider gap-2">
+              <span>Video Editing</span>
+              <span class="text-violetGlow flex-shrink-0"><i class="fa-solid fa-circle-check"></i> Active</span>
+            </div>
+            <h3 class="font-outfit font-bold text-xl text-white group-hover:text-violetGlow transition-colors tracking-tight">High-Retention Showreel</h3>
+            <p class="text-white/40 text-xs leading-relaxed">Dynamic motion graphic visual cuts, typography integration, and custom sound design showreels.</p>
+            <div class="pt-4">
+              <a href="https://tiktok.com/@xfahad_official" target="_blank" class="text-xs font-bold text-white group-hover:text-violetGlow flex items-center gap-1.5 uppercase tracking-wider font-outfit">
+                View Reels <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="work-card-element glass-card rounded-[32px] overflow-hidden p-6 border border-white/5 flex flex-col justify-between group transform transition-all duration-300 hover:-translate-y-2" data-category="design">
+          <div class="relative rounded-2xl overflow-hidden aspect-video bg-black/50 mb-6">
+            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent z-10"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-4xl text-purpleGlow/40 group-hover:scale-110 transition-transform duration-500"><i class="fa-solid fa-laptop-code"></i></div>
+            <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80" alt="Web workspace mockup" class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500" />
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center text-xs text-purpleGlow font-bold uppercase tracking-wider gap-2">
+              <span>Web Development</span>
+              <span class="text-purpleGlow flex-shrink-0"><i class="fa-solid fa-circle-check"></i> Live</span>
+            </div>
+            <h3 class="font-outfit font-bold text-xl text-white group-hover:text-purpleGlow transition-colors tracking-tight">Immersive Portal Codes</h3>
+            <p class="text-white/40 text-xs leading-relaxed">Clean markup setups configured with lightweight Three.js backdrops, GSAP viewport scroll triggers, and active widgets.</p>
+            <div class="pt-4">
+              <a href="#contact" class="text-xs font-bold text-white group-hover:text-purpleGlow flex items-center gap-1.5 uppercase tracking-wider font-outfit">
+                Request Custom Setup <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= XFAHAD TOOLS & RESOURCES ================= -->
+  <section id="xfahad-tools" class="scroll-section py-24 px-6 md:px-16 border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto space-y-14">
+
+      <div class="text-center space-y-4 max-w-2xl mx-auto">
+        <div class="inline-flex items-center gap-2 text-purpleGlow text-xs font-semibold tracking-wider uppercase font-outfit">
+          <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow animate-pulse"></span> XFAHAD Ecosystem
+        </div>
+        <h2 class="font-outfit font-extrabold text-3xl md:text-5xl text-white tracking-tight">
+          Tools & <span class="text-glow-gradient">Resources</span>
+        </h2>
+        <p class="text-white/40 text-sm leading-relaxed">
+          Curated platforms built under the XFAHAD brand — from collaboration to AI-powered design libraries.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- Card 1: Collab Form -->
+        <a href="https://formsxfahadofficial.netlify.app/" target="_blank" class="xf-tool-card p-8 flex flex-col justify-between gap-6 group cursor-none hover-target">
+          <!-- Top glow -->
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purpleGlow via-violetGlow to-transparent opacity-60"></div>
+
+          <div class="flex items-start justify-between gap-4">
+            <div class="space-y-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purpleGlow/10 border border-purpleGlow/25 text-purpleGlow text-[10px] font-bold uppercase tracking-widest font-outfit">
+                <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow animate-ping"></span> Live · Open
+              </div>
+              <h3 class="font-outfit font-extrabold text-2xl md:text-3xl text-white leading-tight group-hover:text-violetGlow transition-colors duration-300">
+                Collab Form
+              </h3>
+              <p class="text-white/40 text-sm leading-relaxed max-w-xs">
+                Start a project with Fahad directly. Submit your creative brief — design, video, or development — and get a response within 24hrs.
+              </p>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-purpleGlow/10 border border-purpleGlow/20 flex items-center justify-center text-purpleGlow text-2xl flex-shrink-0 group-hover:bg-purpleGlow group-hover:text-black transition-all duration-300">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-white/5">
+            <span class="text-[10px] font-mono text-white/20 truncate">formsxfahadofficial.netlify.app</span>
+            <span class="inline-flex items-center gap-1.5 text-purpleGlow text-xs font-bold uppercase tracking-wider font-outfit group-hover:gap-3 transition-all duration-300">
+              Open Form <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </span>
+          </div>
+        </a>
+
+        <!-- Card 2: AI Library -->
+        <a href="https://xfahadofficial-ai-massive-library.netlify.app/" target="_blank" class="xf-tool-card p-8 flex flex-col justify-between gap-6 group cursor-none hover-target">
+          <!-- Top glow -->
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violetGlow via-purpleGlow to-transparent opacity-60"></div>
+
+          <div class="flex items-start justify-between gap-4">
+            <div class="space-y-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violetGlow/10 border border-violetGlow/25 text-violetGlow text-[10px] font-bold uppercase tracking-widest font-outfit">
+                <span class="w-1.5 h-1.5 rounded-full bg-violetGlow animate-ping"></span> Massive · AI
+              </div>
+              <h3 class="font-outfit font-extrabold text-2xl md:text-3xl text-white leading-tight group-hover:text-violetGlow transition-colors duration-300">
+                AI Massive Library
+              </h3>
+              <p class="text-white/40 text-sm leading-relaxed max-w-xs">
+                Explore a curated mega-collection of AI tools, prompts, and resources handpicked by Fahad — the ultimate creative AI toolkit.
+              </p>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-violetGlow/10 border border-violetGlow/20 flex items-center justify-center text-violetGlow text-2xl flex-shrink-0 group-hover:bg-violetGlow group-hover:text-black transition-all duration-300">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-white/5">
+            <span class="text-[10px] font-mono text-white/20 truncate">xfahadofficial-ai-massive-library.netlify.app</span>
+            <span class="inline-flex items-center gap-1.5 text-violetGlow text-xs font-bold uppercase tracking-wider font-outfit group-hover:gap-3 transition-all duration-300">
+              Explore <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT / COLLABORATION SECTION ================= -->
+  <section id="contact" class="scroll-section py-24 px-6 md:px-16 border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        <!-- Left Side -->
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <div class="inline-flex items-center gap-2 text-purpleGlow text-xs font-semibold tracking-wider uppercase font-outfit">
+              <span class="w-1.5 h-1.5 rounded-full bg-purpleGlow"></span> Get in touch
+            </div>
+            <h2 class="font-outfit font-extrabold text-3xl md:text-5xl text-white leading-tight tracking-tight">
+              Initiate Creative <br>
+              <em class="text-glow-gradient not-italic">Connection</em>
+            </h2>
+            <p class="text-white/50 text-sm md:text-base max-w-md leading-relaxed">
+              Let's create something extraordinary. Send a direct request using our form, or write to us via email.
+            </p>
+          </div>
+
+          <!-- Social Details Cards (Premium Emerald WhatsApp integrated) -->
+          <div class="space-y-4 max-w-md">
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-purpleGlow/25 transition-all">
+              <div class="w-10 h-10 rounded-lg bg-purpleGlow/15 flex items-center justify-center text-purpleGlow text-base flex-shrink-0"><i class="fa-solid fa-envelope"></i></div>
+              <div class="min-w-0">
+                <p class="text-[10px] text-white/40 uppercase tracking-wider truncate font-outfit">Direct Support Mail</p>
+                <p class="text-sm font-bold text-white truncate">xfahadofficial@gmail.com</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-violetGlow/25 transition-all">
+              <div class="w-10 h-10 rounded-lg bg-violetGlow/15 flex items-center justify-center text-violetGlow text-base flex-shrink-0"><i class="fa-brands fa-instagram"></i></div>
+              <div class="min-w-0">
+                <p class="text-[10px] text-white/40 uppercase tracking-wider truncate font-outfit">Instagram Profile</p>
+                <p class="text-sm font-bold text-white truncate">@xfahad_official</p>
+              </div>
+            </div>
+
+            <!-- WhatsApp Direct Card Info -->
+            <a href="https://wa.me/923161008038" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-emerald-500/25 transition-all hover-target">
+              <div class="w-10 h-10 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-400 text-base flex-shrink-0"><i class="fa-brands fa-whatsapp text-lg"></i></div>
+              <div class="min-w-0">
+                <p class="text-[10px] text-white/40 uppercase tracking-wider truncate font-outfit">WhatsApp Direct Chat</p>
+                <p class="text-sm font-bold text-white truncate">+92 316 1008038</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <a href="https://behance.net/xfahadofficial" target="_blank" class="w-12 h-12 rounded-xl bg-white/5 hover:bg-purpleGlow hover:text-black border border-white/10 flex items-center justify-center text-lg transition-all duration-300"><i class="fa-brands fa-behance"></i></a>
+            <a href="https://linkedin.com/in/xfahadofficial" target="_blank" class="w-12 h-12 rounded-xl bg-white/5 hover:bg-purpleGlow hover:text-black border border-white/10 flex items-center justify-center text-lg transition-all duration-300"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://instagram.com/xfahad_official" target="_blank" class="w-12 h-12 rounded-xl bg-white/5 hover:bg-purpleGlow hover:text-black border border-white/10 flex items-center justify-center text-lg transition-all duration-300"><i class="fa-brands fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Right Side Glass Form -->
+        <div class="glass-card rounded-[32px] p-6 md:p-10 border border-white/5 relative">
+          <form id="contact-form" action="https://formsubmit.co/xfahadofficial@gmail.com" method="POST" class="space-y-6">
+            <!-- FormSubmit config -->
+            <input type="hidden" name="_subject" value="New Portfolio Inquiry — xfahad.com">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next" value="https://xfahadofficial.netlify.app/">
+            <input type="text" name="_honey" style="display:none">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-[10px] text-white/40 uppercase tracking-wider font-semibold block font-outfit">Full Name</label>
+                <input type="text" name="name" required class="w-full bg-white/[0.03] border border-white/10 focus:border-purpleGlow rounded-xl py-3.5 px-4 text-white text-sm outline-none transition-all" placeholder="Enter your name..." />
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] text-white/40 uppercase tracking-wider font-semibold block font-outfit">Email Address</label>
+                <input type="email" name="email" required class="w-full bg-white/[0.03] border border-white/10 focus:border-purpleGlow rounded-xl py-3.5 px-4 text-white text-sm outline-none transition-all" placeholder="your@email.com" />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[10px] text-white/40 uppercase tracking-wider font-semibold block font-outfit">Project Outline</label>
+              <textarea name="message" required rows="5" class="w-full bg-white/[0.03] border border-white/10 focus:border-purpleGlow rounded-xl py-3.5 px-4 text-white text-sm outline-none transition-all resize-none" placeholder="Provide design, development, or video editing outlines..."></textarea>
+            </div>
+
+            <button type="submit" id="form-submit-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-purpleGlow to-violetGlow text-black font-outfit font-bold text-xs tracking-[0.2em] uppercase hover:shadow-[0_0_25px_rgba(157,78,221,0.3)] transition-all duration-300 flex items-center justify-center gap-2">
+              Send Message <i class="fa-solid fa-paper-plane text-[10px]"></i>
+            </button>
+
+            <div id="form-status" class="p-4 rounded-xl text-xs font-semibold text-center hidden"></div>
+
+            <p class="text-[10px] text-white/20 text-center tracking-wider">
+              Powered by secure mail delivery · Or reach directly via WhatsApp
+            </p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PREMIUM FOOTER ================= -->
+  <footer class="py-12 px-6 md:px-16 border-t border-white/5 relative z-10">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="space-y-1 text-center md:text-left">
+        <h3 class="font-outfit font-extrabold text-lg text-white tracking-normal">XFAHAD<span class="text-purpleGlow">.</span></h3>
+        <p class="text-xs text-white/30 tracking-wider">Designer, Editor & Developer | Owner @zenitxglobal</p>
+      </div>
+
+      <div class="flex gap-6 text-[11px] font-semibold text-white/40 tracking-wider uppercase flex-wrap justify-center">
+        <a href="#home" class="hover:text-purpleGlow transition-colors">Home</a>
+        <a href="#identity-portal" class="hover:text-purpleGlow transition-colors">Brand Hub</a>
+        <a href="#skills" class="hover:text-purpleGlow transition-colors">Skills</a>
+        <a href="#xfahad-tools" class="hover:text-violetGlow transition-colors">Tools</a>
+        <a href="#contact" class="hover:text-purpleGlow transition-colors">Contact</a>
+        <a href="https://formsxfahadofficial.netlify.app/" target="_blank" class="hover:text-violetGlow transition-colors">Collab Form ↗</a>
+      </div>
+
+      <p class="text-[10px] text-white/20 tracking-widest uppercase">
+        &copy; 2026 FAHAD MANSOORI. ALL RIGHTS RESERVED
+      </p>
+    </div>
+  </footer>
+
+</div>
+
+<!-- WhatsApp Side Bot Floating Widget -->
+<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 pointer-events-none">
+  <!-- Bot message popup bubble -->
+  <div id="wa-tooltip" class="opacity-0 translate-y-2 pointer-events-auto bg-[#0c0616]/95 border border-emerald-500/20 px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 transition-all duration-500 transform backdrop-blur-md">
+    <span class="relative flex h-2 w-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+    </span>
+    <p class="text-[11px] font-bold tracking-wider text-emerald-400 font-outfit uppercase">Online! Let's chat</p>
+  </div>
+
+  <!-- WhatsApp Trigger -->
+  <a href="https://wa.me/923161008038" target="_blank" class="pointer-events-auto w-14 h-14 rounded-full bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.7)] flex items-center justify-center text-2xl transition-all duration-300 transform hover:scale-110 hover-target group">
+    <i class="fa-brands fa-whatsapp transition-transform duration-300 group-hover:rotate-12"></i>
+  </a>
+</div>
+
+<script>
+// ===== WEB STARTUP LOADER SEQUENCE =====
+const loaderBar = document.getElementById('loader-bar');
+const loaderPct = document.getElementById('loader-pct');
+const loader = document.getElementById('loader');
+let percentageVal = 0;
+
+const loadTick = setInterval(() => {
+  percentageVal += Math.random() * 15;
+  if (percentageVal >= 100) {
+    percentageVal = 100;
+    clearInterval(loadTick);
+    
+    gsap.to(loader, {
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      onComplete: () => {
+        loader.style.display = 'none';
+        initHeroAndScrollAnimations();
+      }
+    });
+  }
+  loaderBar.style.width = percentageVal + '%';
+  loaderPct.textContent = Math.floor(percentageVal) + '%';
+}, 80);
+
+// ===== CURSOR TRAILING POSITION SYSTEM =====
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mousePosX = 0, mousePosY = 0;
+let ringPosX = 0, ringPosY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  mousePosX = e.clientX;
+  mousePosY = e.clientY;
+  cursor.style.left = mousePosX + 'px';
+  cursor.style.top = mousePosY + 'px';
+});
+
+function animateCursorFollow() {
+  ringPosX += (mousePosX - ringPosX) * 0.15;
+  ringPosY += (mousePosY - ringPosY) * 0.15;
+  ring.style.left = ringPosX + 'px';
+  ring.style.top = ringPosY + 'px';
+  requestAnimationFrame(animateCursorFollow);
+}
+requestAnimationFrame(animateCursorFollow);
+
+// ===== NAVBAR SCROLL BEHAVIOR =====
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navbar.classList.add('shadow-[0_8px_32px_rgba(0,0,0,0.5)]', 'py-3');
+    navbar.classList.remove('py-4');
+  } else {
+    navbar.classList.remove('shadow-[0_8px_32px_rgba(0,0,0,0.5)]', 'py-3');
+    navbar.classList.add('py-4');
+  }
+});
+
+// ===== MOBILE DRAWER CONTROLS =====
+const mobileToggle = document.getElementById('mobile-toggle');
+const mobileClose = document.getElementById('mobile-close');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+mobileToggle.addEventListener('click', () => {
+  mobileMenu.classList.remove('hidden');
+  mobileMenu.classList.add('flex');
+});
+const closeMobileMenu = () => {
+  mobileMenu.classList.add('hidden');
+  mobileMenu.classList.remove('flex');
+};
+mobileClose.addEventListener('click', closeMobileMenu);
+mobileLinks.forEach(item => item.addEventListener('click', closeMobileMenu));
+
+// ===== THREE.JS PARTICLE BACKDROP (PURPLE SPECTRUM CONFIG) =====
+(function initParticleWeb() {
+  const canvas = document.getElementById('three-web-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 8;
+
+  const count = 120;
+  const geometry = new THREE.BufferGeometry();
+  const positionStore = new Float32Array(count * 3);
+  const velocityList = [];
+
+  for (let i = 0; i < count; i++) {
+    positionStore[i * 3] = (Math.random() - 0.5) * 20;
+    positionStore[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positionStore[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    
+    velocityList.push({
+      x: (Math.random() - 0.5) * 0.003,
+      y: (Math.random() - 0.5) * 0.003,
+      z: (Math.random() - 0.5) * 0.002
+    });
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positionStore, 3));
+  
+  function getPointTexture() {
+    const pCanvas = document.createElement('canvas');
+    pCanvas.width = 16;
+    pCanvas.height = 16;
+    const ctx = pCanvas.getContext('2d');
+    const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+    // Custom purple spectrum glows for dots
+    grad.addColorStop(0, 'rgba(157, 78, 221, 1)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 16, 16);
+    return new THREE.CanvasTexture(pCanvas);
+  }
+
+  const material = new THREE.PointsMaterial({
+    size: 0.22,
+    map: getPointTexture(),
+    transparent: true,
+    opacity: 0.5,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  const particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+
+  const lineMat = new THREE.LineBasicMaterial({
+    color: 0x9d4edd, // Matching purple nodes lines
+    transparent: true,
+    opacity: 0.05,
+    blending: THREE.AdditiveBlending
+  });
+  
+  const lineGeo = new THREE.BufferGeometry();
+  const lineSystem = new THREE.LineSegments(lineGeo, lineMat);
+  scene.add(lineSystem);
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  let targetX = 0, targetY = 0;
+  document.addEventListener('mousemove', (e) => {
+    targetX = (e.clientX / window.innerWidth - 0.5) * 1.5;
+    targetY = -(e.clientY / window.innerHeight - 0.5) * 1.5;
+  });
+
+  function renderLoop() {
+    requestAnimationFrame(renderLoop);
+
+    const positions = particles.geometry.attributes.position.array;
+    const connections = [];
+    
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] += velocityList[i].x;
+      positions[i * 3 + 1] += velocityList[i].y;
+
+      if (Math.abs(positions[i * 3]) > 10) velocityList[i].x *= -1;
+      if (Math.abs(positions[i * 3 + 1]) > 10) velocityList[i].y *= -1;
+    }
+    particles.geometry.attributes.position.needsUpdate = true;
+
+    for (let i = 0; i < count; i++) {
+      for (let j = i + 1; j < count; j++) {
+        const dx = positions[i * 3] - positions[j * 3];
+        const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+        const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        if (dist < 3) {
+          connections.push(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
+          connections.push(positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]);
+        }
+      }
+    }
+
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(connections, 3));
+    lineGeo.attributes.position.needsUpdate = true;
+
+    particles.rotation.y += (targetX - particles.rotation.y) * 0.05;
+    particles.rotation.x += (targetY - particles.rotation.x) * 0.05;
+    lineSystem.rotation.y = particles.rotation.y;
+    lineSystem.rotation.x = particles.rotation.x;
+
+    renderer.render(scene, camera);
+  }
+  renderLoop();
+})();
+
+// ===== SCROLL TRACKER =====
+const scrollTracker = document.getElementById('scroll-tracker');
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progressPercent = (scrollTop / scrollHeight) * 100;
+  scrollTracker.style.width = progressPercent + '%';
+});
+
+// ===== ACTIVE NAV LINK ON SCROLL =====
+const navLinks = document.querySelectorAll('#navbar ul a');
+const sections = ['home', 'identity-portal', 'zenitx', 'journey', 'skills', 'works'];
+window.addEventListener('scroll', () => {
+  let current = 'home';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('nav-active');
+    link.style.padding = '';
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('nav-active');
+    }
+  });
+});
+
+// ===== TYPEWRITER SUBHEADING ROTATIONS =====
+const contentKeys = ["Visual Designer.", "Video Editor.", "Web Developer.", "Owner @zenitxglobal."];
+const typewriterSpan = document.getElementById('typewriter');
+let keyIdx = 0;
+let charIdx = 0;
+let deletionFlag = false;
+
+function triggerTypewriter() {
+  const activeWord = contentKeys[keyIdx];
+  
+  if (deletionFlag) {
+    typewriterSpan.textContent = activeWord.substring(0, charIdx - 1);
+    charIdx--;
+  } else {
+    typewriterSpan.textContent = activeWord.substring(0, charIdx + 1);
+    charIdx++;
+  }
+
+  let delay = deletionFlag ? 45 : 100;
+
+  if (!deletionFlag && charIdx === activeWord.length) {
+    delay = 2000;
+    deletionFlag = true;
+  } else if (deletionFlag && charIdx === 0) {
+    deletionFlag = false;
+    keyIdx = (keyIdx + 1) % contentKeys.length;
+    delay = 500;
+  }
+
+  setTimeout(triggerTypewriter, delay);
+}
+
+// ===== PORTFOLIO GRID FILTER MECHANISM =====
+const filterBtns = document.querySelectorAll('.filter-btn');
+const portfolioCards = document.querySelectorAll('.work-card-element');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => {
+      b.classList.remove('bg-purpleGlow', 'text-black');
+      b.classList.add('bg-white/5', 'text-white/70');
+    });
+    btn.classList.add('bg-purpleGlow', 'text-black');
+    btn.classList.remove('bg-white/5', 'text-white/70');
+
+    const criteria = btn.getAttribute('data-filter');
+
+    portfolioCards.forEach(card => {
+      if (criteria === 'all' || card.getAttribute('data-category') === criteria) {
+        card.style.display = 'flex';
+        gsap.fromTo(card, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.4 });
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+// ===== DYNAMIC MOUSE 3D TILT ON GLASS CARDS =====
+document.querySelectorAll('.glass-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const bound = card.getBoundingClientRect();
+    const relativeX = ((e.clientX - bound.left) / bound.width - 0.5) * 15;
+    const relativeY = ((e.clientY - bound.top) / bound.height - 0.5) * -15;
+    card.style.transform = `perspective(1000px) rotateX(${relativeY}deg) rotateY(${relativeX}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+// Stacking scroll effect removed per request.
+
+triggerTypewriter();
+</script>
+</body>
+</html>
